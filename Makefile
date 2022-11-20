@@ -29,4 +29,4 @@ build:
 release: build
 	poetry publish --skip-existing
 	git tag $$(toml get --toml-path pyproject.toml tool.poetry.version)
-	git push --follow-tags
+	git push $$(toml get --toml-path pyproject.toml tool.poetry.version)
