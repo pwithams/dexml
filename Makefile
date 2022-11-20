@@ -29,10 +29,11 @@ build:
 	poetry build
 
 update-init:
-	sed -i "s/__version__ = .*/__version__ = \"$(VERSION)\"/g" dexml/__init__.py
+	@sed -i "s/__version__ = .*/__version__ = \"$(VERSION)\"/g" dexml/__init__.py
 	git commit -am "v"$(VERSION)
 
 release: update-init build
 	poetry publish --skip-existing
 	git tag $(VERSION)
 	git push origin $(VERSION)
+	git push
