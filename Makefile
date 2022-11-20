@@ -1,3 +1,5 @@
+VERSION = $$(poetry run toml get --toml-path pyproject.toml tool.poetry.version)
+
 restore:
 	poetry install
 	pre-commit install
@@ -26,7 +28,11 @@ style:
 build:
 	poetry build
 
-release: build
+update-init:
+	sed -i "s/__version__ = .*/__version__ = \"$(VERSION)\"/g" dexml/__init__.py
+	git commit -am "v"$(VERSION)
+
+release: update-init build
 	poetry publish --skip-existing
-	git tag $$(toml get --toml-path pyproject.toml tool.poetry.version)
-	git push origin $$(toml get --toml-path pyproject.toml tool.poetry.version)
+	git tag $(VERSION)
+	git push origin $(VERSION)
