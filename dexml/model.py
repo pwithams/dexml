@@ -3,7 +3,7 @@ from xml.dom import minidom
 
 from dexml import constants, exceptions
 from dexml.fields import field as dexml_field
-from dexml.meta import ModelMetaclass
+from dexml.meta import Meta, ModelMetaclass
 
 
 class Model(metaclass=ModelMetaclass):
@@ -32,7 +32,7 @@ class Model(metaclass=ModelMetaclass):
     """
 
     _fields: List[dexml_field.Field] = []
-    meta = None
+    meta: Meta
 
     def __init__(self, **kwds):
         """Default Model constructor.
