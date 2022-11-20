@@ -1,15 +1,28 @@
-# dexml: A dead-simple Object-XML mapper for Python
+# dexml: An Object-XML Mapper for Python
 
-Let's face it: xml is a fact of modern life.  I'd even go so far as to say
-that it's *good* at what it does.  But that doesn't mean it's easy to work
-with and it doesn't mean that we have to like it.  Most of the time, XML
+This is a maintained version of the original `dexml` Python package, intended for Python 3 use only.
+
+Other than provided a maintained version that supports modern Python 3, other future goals include:
+ - support with Python dataclasses and `pydantic` models
+ - support for auto-generating models based on example XML payloads
+ - keep backwards compatibility with original `dexml` package where possible
+
+Before refactoring, the original code was sourced from both:
+ - https://github.com/realrunner/dexml
+ - https://github.com/rfk/dexml
+
+## Documentation
+
+Let's face it: xml is a fact of modern life. I'd even go so far as to say
+that it's *good* at what it does. But that doesn't mean it's easy to work
+with and it doesn't mean that we have to like it. Most of the time, XML
 just needs to get out of the way and let you do some actual work instead
 of writing code to traverse and manipulate yet another DOM.
 
 The dexml module takes the obvious mapping between XML tags and Python objects
-and lets you capture that as cleanly as possible.  Loosely inspired by Django's
+and lets you capture that as cleanly as possible. Loosely inspired by Django's
 ORM, you write simple class definitions to define the expected structure of
-your XML document.  Like so::
+your XML document. Like so::
 
 ```
   >>> import dexml
@@ -61,7 +74,7 @@ Of course, it gets more interesting when you nest Model definitions, like this::
 ```
 
 There's support for XML namespaces, default field values, case-insensitive
-parsing, and more fun stuff.  Check out the documentation on the following
+parsing, and more fun stuff. Check out the documentation on the following
 classes for more details:
 
 ```
@@ -69,3 +82,19 @@ classes for more details:
   :Field:  the base class for individual model fields
   :Meta:   meta-information about how to parse/render a model
 ```
+
+## Development
+
+The project uses [poetry](https://python-poetry.org/) to manage dependencies, virtual environments, and publishing.
+
+It also uses `pre-commit` to provide some standard git hook checks.
+
+The `Makefile` has some shortcuts for common operations. After cloning, the following steps can be taken:
+1. Run `make restore`
+2. Optionally enter virtual environment with `poetry shell`
+3. Run `make test`
+4. Run `make build` to create a distribution
+
+## Contributing
+
+This is an early stage project but pull requests are welcome.
