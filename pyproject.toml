@@ -4,6 +4,10 @@ version = "0.0.1"
 description = "A dead-simple xml object mapper for Python"
 authors = ["Patrick Withams <pwithams@gmail.com>"]
 readme = "README.md"
+repository = "https://github.com/pwithams/dexml-python3"
+packages = [
+    { include = "dexml" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -20,6 +24,7 @@ isort = "^5.10.1"
 autoflake = "^1.7.7"
 coverage = "^6.5.0"
 pyannotate = "^1.2.0"
+toml-cli = "^0.3.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -22,3 +22,11 @@ check:
 
 style:
 	poetry run pylint dexml --fail-under=8
+
+build:
+	poetry build
+
+release: build
+	poetry publish
+	git tag $(toml get --toml-path pyproject.toml tool.poetry.version)
+	git push --follow-tags
