@@ -1,4 +1,5 @@
 import copy
+from typing import Any, Dict, Optional
 
 from dexml.fields.field import Field
 
@@ -35,7 +36,7 @@ class Meta:
         "order_sensitive": True,
     }
 
-    def __init__(self, name, meta_attrs):
+    def __init__(self, name: str, meta_attrs: Dict[str, str]) -> None:
         self.tagname = None
         for (attr, default) in self._defaults.items():
             setattr(self, attr, meta_attrs.get(attr, default))
@@ -43,7 +44,7 @@ class Meta:
             self.tagname = name
 
 
-def _meta_attributes(meta):
+def _meta_attributes(meta: Optional[type]) -> Dict[str, str]:
     """Extract attributes from a "meta" object."""
     meta_attrs = {}
     if meta:
@@ -61,8 +62,8 @@ class ModelMetaclass(type):
     sets a Model's default tagname to be equal to the declared class name.
     """
 
-    instances_by_tagname = {}
-    instances_by_classname = {}
+    instances_by_tagname: Dict[str, Any] = {}
+    instances_by_classname: Dict[str, Any] = {}
 
     def __new__(mcls, name, bases, attrs):
         cls = super().__new__(mcls, name, bases, attrs)
@@ -97,7 +98,7 @@ class ModelMetaclass(type):
                 value.field_name = name
                 value.model_class = cls
                 cls_fields.append(value)
-        cls._fields = [x for x in base_fields.values()] + cls_fields
+        cls._fields = list(base_fields.values()) + cls_fields
         cls._fields.sort(key=lambda f: f._order_counter)
         #  Register the new class so we can find it by name later on
         tagname = (cls.meta.namespace, cls.meta.tagname)

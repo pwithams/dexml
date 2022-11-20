@@ -1,5 +1,5 @@
 import random
-from typing import Any
+from typing import Any, Optional
 from xml.sax.saxutils import escape, quoteattr
 
 from dexml import constants, exceptions
@@ -32,8 +32,6 @@ class Value(field.Field):
     (namespace,tagname) pair for 'attrname' or 'tagname' respectively.
     """
 
-    tagname: str
-    attrname: str
     default: Any
 
     class Arguments(field.Field.Arguments):
@@ -41,12 +39,12 @@ class Value(field.Field):
         attrname = None
         default = None
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds: Any) -> None:
         super().__init__(**kwds)
         if self.default is not None:
             self.required = False
 
-    def _get_attrname(self):
+    def _get_attrname(self) -> Optional[str]:
         if self.__dict__["tagname"]:
             return None
         attrname = self.__dict__["attrname"]
@@ -54,7 +52,7 @@ class Value(field.Field):
             attrname = self.field_name
         return attrname
 
-    def _set_attrname(self, attrname):
+    def _set_attrname(self, attrname) -> None:
         self.__dict__["attrname"] = attrname
 
     attrname = property(_get_attrname, _set_attrname)
@@ -67,7 +65,7 @@ class Value(field.Field):
             tagname = self.field_name
         return tagname
 
-    def _set_tagname(self, tagname):
+    def _set_tagname(self, tagname: str) -> None:
         self.__dict__["tagname"] = tagname
 
     tagname = property(_get_tagname, _set_tagname)

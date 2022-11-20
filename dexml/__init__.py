@@ -62,12 +62,12 @@ classes for more details:
   :Meta:   meta-information about how to parse/render a model
 
 """
+import importlib.metadata
 
-__ver_major__ = 0
-__ver_minor__ = 5
-__ver_patch__ = 3
-__ver_sub__ = ""
-__version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__, __ver_patch__, __ver_sub__)
+try:
+    __version__ = importlib.metadata.version("dexml")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "dev"
 
 from dexml import fields
 from dexml.constants import Status

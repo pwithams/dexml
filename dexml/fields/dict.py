@@ -57,7 +57,6 @@ class Dict(dexml_field.Field):
     transparently removed when parsing.
     """
 
-    field: str
     minlength: int
     maxlength: int
     unique: bool
@@ -87,7 +86,7 @@ class Dict(dexml_field.Field):
             raise ValueError("Dict must be required if it has minlength")
         self.key = key
 
-    def _get_field(self):
+    def _get_field(self) -> dexml_field.Field:
         field = self.__dict__["field"]
         if not hasattr(field, "field_name"):
             field.field_name = self.field_name
@@ -95,7 +94,7 @@ class Dict(dexml_field.Field):
             field.model_class = self.model_class
         return field
 
-    def _set_field(self, field):
+    def _set_field(self, field) -> None:
         self.__dict__["field"] = field
 
     field = property(_get_field, _set_field)

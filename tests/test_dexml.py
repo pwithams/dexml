@@ -51,7 +51,7 @@ class TestDexmlDocstring(unittest.TestCase):
         updates it with the contents of dexml.__doc__.
         """
         dirname = os.path.dirname
-        readme = os.path.join(dirname(dirname(__file__)), "README.rst")
+        readme = os.path.join(dirname(dirname(__file__)), "README.md")
         if not os.path.isfile(readme):
             f = open(readme, "wb")
             f.write(dexml.__doc__.encode())

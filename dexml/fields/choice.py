@@ -1,3 +1,5 @@
+from typing import List
+
 from dexml import constants, exceptions
 from dexml.fields import field as dexml_field
 from dexml.fields import model as model_field
@@ -6,10 +8,10 @@ from dexml.fields import model as model_field
 class Choice(dexml_field.Field):
     """Field subclass accepting any one of a given set of model_field.Model fields."""
 
-    fields: list
+    fields: List[dexml_field.Field]
 
     class Arguments(dexml_field.Field.Arguments):
-        fields = []
+        fields: List[dexml_field.Field] = []
 
     def __init__(self, *fields, **kwds):
         real_fields = []

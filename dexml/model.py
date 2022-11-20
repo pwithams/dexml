@@ -1,6 +1,8 @@
+from typing import List
 from xml.dom import minidom
 
 from dexml import constants, exceptions
+from dexml.fields import field as dexml_field
 from dexml.meta import ModelMetaclass
 
 
@@ -29,7 +31,7 @@ class Model(metaclass=ModelMetaclass):
     'fields' submodule for available field types.
     """
 
-    _fields = []
+    _fields: List[dexml_field.Field] = []
     meta = None
 
     def __init__(self, **kwds):

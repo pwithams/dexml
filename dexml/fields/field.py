@@ -4,7 +4,8 @@ dexml.fields:  basic field type definitions for dexml
 =====================================================
 
 """
-from typing import Any
+import xml.dom.minidom
+from typing import Any, Dict, Generator, List
 
 from dexml import constants
 
@@ -45,7 +46,7 @@ class Field(object):
     class Arguments:
         required = True
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds: Dict[str, Any]) -> None:
         """Default Field constructor.
 
         This constructor keeps track of the order in which Field instances
@@ -61,7 +62,9 @@ class Field(object):
             if not argnm.startswith("__"):
                 setattr(self, argnm, kwds.get(argnm, getattr(args, argnm)))
 
-    def parse_attributes(self, obj, attrs):
+    def parse_attributes(
+        self, obj: object, attrs: List[xml.dom.minidom.Attr]
+    ) -> List[xml.dom.minidom.Attr]:
         """Parse any attributes for this field from the given list.
 
         This method will be called with the Model instance being parsed and
@@ -71,7 +74,9 @@ class Field(object):
         """
         return attrs
 
-    def parse_child_node(self, obj, node):
+    def parse_child_node(
+        self, obj: object, node: xml.dom.minidom.Element
+    ) -> constants.Status:
         """Parse a child node for this field.
 
         This method will be called with the Model instance being parsed and
@@ -89,20 +94,26 @@ class Field(object):
         """
         return constants.Status.PARSE_SKIP
 
-    def parse_done(self, obj):
+    def parse_done(self, obj: object) -> None:
         """Finalize parsing for the given object.
 
         This method is called as a simple indicator that no more data will
         be forthcoming.  No return value is expected.
         """
 
-    def render_attributes(self, obj, val, nsmap):
+    def render_attributes(
+        self, obj: object, val: Any, nsmap: Dict[str, Any]
+    ) -> Generator[str, None, None]:
         """Render any attributes that this field manages."""
-        return []
+        return
+        yield
 
-    def render_children(self, obj, val, nsmap):
+    def render_children(
+        self, obj: object, val: Any, nsmap: Dict[str, Any]
+    ) -> Generator[str, None, None]:
         """Render any child nodes that this field manages."""
-        return []
+        return
+        yield
 
     def __get__(self, instance, owner=None):
         if instance is None:

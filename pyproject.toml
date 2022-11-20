@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "dexml"
+name = "dexml-python3"
 version = "0.1.0"
 description = "A dead-simple xml object mapper for Python"
 authors = ["Patrick Withams <pwithams@gmail.com>"]
@@ -18,6 +18,8 @@ pycodestyle = "^2.9.1"
 pre-commit = "^2.20.0"
 isort = "^5.10.1"
 autoflake = "^1.7.7"
+coverage = "^6.5.0"
+pyannotate = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -41,7 +43,7 @@ max-attributes = 10
 max-locals = 20
 
 [tool.coverage.report]
-fail_under = 10
+fail_under = 80
 omit = ["tests*"]
 include = ["dexml*"]
 

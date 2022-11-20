@@ -35,7 +35,6 @@ class List(dexml_field.Field):
     transparently removed when parsing.
     """
 
-    field: dexml_field.Field
     minlength: int
     maxlength: int
     tagname: str
@@ -60,7 +59,7 @@ class List(dexml_field.Field):
         if self.minlength and not self.required:
             raise ValueError("List must be required if it has minlength")
 
-    def _get_field(self):
+    def _get_field(self) -> dexml_field.Field:
         field = self.__dict__["field"]
         if not hasattr(field, "field_name"):
             field.field_name = self.field_name
@@ -68,7 +67,7 @@ class List(dexml_field.Field):
             field.model_class = self.model_class
         return field
 
-    def _set_field(self, field):
+    def _set_field(self, field) -> None:
         self.__dict__["field"] = field
 
     field = property(_get_field, _set_field)
