@@ -34,37 +34,6 @@ def model_fields_equal(m1, m2):
     return True
 
 
-class TestDexmlDocstring(unittest.TestCase):
-    def test_docstring(self):
-        """Test dexml docstrings
-
-        We don't do this on python3 because of the many small ways in
-        which the output has changed in that version.
-        """
-        if sys.version_info < (3,):
-            assert doctest.testmod(dexml)[0] == 0
-
-    def test_readme_matches_docstring(self):
-        """Ensure that the README is in sync with the docstring.
-
-        This test should always pass; if the README is out of sync it just
-        updates it with the contents of dexml.__doc__.
-        """
-        dirname = os.path.dirname
-        readme = os.path.join(dirname(dirname(__file__)), "README.md")
-        if not os.path.isfile(readme):
-            f = open(readme, "wb")
-            f.write(dexml.__doc__.encode())
-            f.close()
-        else:
-            f = open(readme, "rb")
-            if f.read() != dexml.__doc__:
-                f.close()
-                f = open(readme, "wb")
-                f.write(dexml.__doc__.encode())
-                f.close()
-
-
 class TestDexml(unittest.TestCase):
     def test_base(self):
         """Test operation of a dexml.Model class with no fields."""

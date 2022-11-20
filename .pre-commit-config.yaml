@@ -32,4 +32,5 @@ repos:
      language: system
      types: [python]
      args: ["--fail-under=8"]
+     exclude: tests
 
