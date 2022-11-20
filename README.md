@@ -2,7 +2,7 @@
 
 This is a maintained version of the original `dexml` Python package, intended for Python 3 use only.
 
-Other than provided a maintained version that supports modern Python 3, other future goals include:
+Other than providing a maintained version that supports modern Python 3, other future goals include:
  - support with Python dataclasses and `pydantic` models
  - support for auto-generating models based on example XML payloads
  - keep backwards compatibility with original `dexml` package where possible
