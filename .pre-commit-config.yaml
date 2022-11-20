@@ -1,0 +1,35 @@
+fail_fast: true
+repos:
+ - repo: local
+   hooks:
+   - id: format-check-black
+     name:  Formatting Check - black
+     entry: black
+     language: system
+     types: [python]
+     args: ["--check"]
+   - id: format-check-isort
+     name:  Formatting Check - isort
+     entry: isort
+     language: system
+     types: [python]
+     args: ["--check"]
+   - id: check
+     name: Pylint Error Check
+     entry: pylint
+     language: system
+     types: [python]
+     args: ["--errors-only"]
+   - id: test-unit
+     name:  Unit Tests [make test]
+     entry: make test
+     language: system
+     types: [python]
+     require_serial: true
+   - id: check
+     name: Pylint Style Check
+     entry: pylint
+     language: system
+     types: [python]
+     args: ["--fail-under=8"]
+

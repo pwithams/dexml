@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "dexml"
+version = "0.1.0"
+description = "A dead-simple xml object mapper for Python"
+authors = ["Patrick Withams <pwithams@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+black = "^22.10.0"
+mypy = "^0.991"
+pylint = "^2.15.6"
+pycodestyle = "^2.9.1"
+pre-commit = "^2.20.0"
+isort = "^5.10.1"
+autoflake = "^1.7.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.main]
+fail-under = 8
+
+[tool.pylint.format]
+ignore-long-lines = "^\\s*(# )?<?https?://\\S+>?$"
+max-line-length = 100
+
+[tool.pylint."messages control"]
+disable = ["too-few-public-methods", "missing-function-docstring", "missing-class-docstring", "missing-module-docstring"]
+
+[tool.pylint.similarities]
+ignore-imports = "yes"
+
+[tool.pylint.design]
+max-attributes = 10
+max-locals = 20
+
+[tool.coverage.report]
+fail_under = 10
+omit = ["tests*"]
+include = ["dexml*"]
+
+[tool.coverage.json]
+output = "coverage.json"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
