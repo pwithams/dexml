@@ -6,7 +6,7 @@ from dexml.constants import Status
 from dexml.exceptions import ParseError, RenderError, XmlError
 from dexml.model import Model
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 
 __all__ = [
