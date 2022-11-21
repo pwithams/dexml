@@ -42,9 +42,11 @@ class Field(object):
     required: bool
     field_name: str
     model_class: Any
+    default: Any
 
     class Arguments:
         required = True
+        default = None
 
     def __init__(self, **kwds: Dict[str, Any]) -> None:
         """Default Field constructor.
@@ -61,6 +63,8 @@ class Field(object):
         for argnm in dir(args):
             if not argnm.startswith("__"):
                 setattr(self, argnm, kwds.get(argnm, getattr(args, argnm)))
+        if self.default is not None:
+            self.required = False
 
     def parse_attributes(
         self, obj: object, attrs: List[xml.dom.minidom.Attr]
@@ -118,7 +122,10 @@ class Field(object):
     def __get__(self, instance, owner=None):
         if instance is None:
             return self
-        return instance.__dict__.get(self.field_name)
+        val = instance.__dict__.get(self.field_name)
+        if val is None:
+            return self.default
+        return val
 
     def __set__(self, instance, value):
         instance.__dict__[self.field_name] = value

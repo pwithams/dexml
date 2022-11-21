@@ -32,17 +32,12 @@ class Value(field.Field):
     (namespace,tagname) pair for 'attrname' or 'tagname' respectively.
     """
 
-    default: Any
-
     class Arguments(field.Field.Arguments):
         tagname = None
         attrname = None
-        default = None
 
     def __init__(self, **kwds: Any) -> None:
         super().__init__(**kwds)
-        if self.default is not None:
-            self.required = False
 
     def _get_attrname(self) -> Optional[str]:
         if self.__dict__["tagname"]:
@@ -69,12 +64,6 @@ class Value(field.Field):
         self.__dict__["tagname"] = tagname
 
     tagname = property(_get_tagname, _set_tagname)
-
-    def __get__(self, instance, owner=None):
-        val = super().__get__(instance, owner)
-        if val is None:
-            return self.default
-        return val
 
     def parse_attributes(self, obj, attrs):
         #  Bail out if we're attached to a subtag rather than an attr.
@@ -114,7 +103,7 @@ class Value(field.Field):
         return constants.Status.PARSE_DONE
 
     def render_attributes(self, obj, val, nsmap):
-        if val is not None and val is not self.default and self.attrname:
+        if val is not None and self.attrname:
             qaval = quoteattr(self.render_value(val))
             if isinstance(self.attrname, str):
                 yield f"{self.attrname}={qaval}"
@@ -139,7 +128,7 @@ class Value(field.Field):
                     yield f"{prefix}:{nm}={qaval}"
 
     def render_children(self, obj, val, nsmap):
-        if val is not None and val is not self.default and self.tagname:
+        if val is not None and self.tagname:
             val = self._esc_render_value(val)
             if self.tagname == ".":
                 yield val
