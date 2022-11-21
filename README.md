@@ -83,6 +83,18 @@ classes for more details:
   :Meta:   meta-information about how to parse/render a model
 ```
 
+## Auto-Generating Models
+
+You can generate Python code with `dexml` models from XML using the following command:
+
+```
+cat file.xml | python -m dexml > model.py
+```
+
+Only the `Model`, `String`, `Integer`, `Float`, and `Boolean` fields are currently supported.
+
+Generation is not intended to be 100% perfect but as a starting point for manually creating large models.
+
 ## Development
 
 The project uses [poetry](https://python-poetry.org/) to manage dependencies, virtual environments, and publishing.
