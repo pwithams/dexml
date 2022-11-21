@@ -112,7 +112,7 @@ class Address(dexml.Model):
 class PersonDetails(dexml.Model):
     person_name = fields.String(tagname="PersonName", default="Jim")
     person_age = fields.Integer(tagname="PersonAge", default=42)
-    address = fields.Model(Address)
+    address = fields.Model(Address, default=Address())
 
 
 class Block(dexml.Model):
@@ -120,7 +120,7 @@ class Block(dexml.Model):
         tagname = "BLOCK"
     amount = fields.Float(tagname="Amount", default=240.45)
     enabled = fields.Boolean(tagname="Enabled", default=True)
-    person_details = fields.Model(PersonDetails)"""
+    person_details = fields.Model(PersonDetails, default=PersonDetails())"""
 
     result = generator.parse(input_xml)
     assert result == expected_output
@@ -152,14 +152,14 @@ class PersonDetails(dexml.Model):
         tagname = "person_details"
     person_name = fields.String(default="Jim")
     person_age = fields.Integer(tagname="PersonAge", default=42)
-    address = fields.Model(Address)
+    address = fields.Model(Address, default=Address())
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
     amount = fields.Float(tagname="Amount", default=240.45)
-    person_details = fields.Model(PersonDetails)"""
+    person_details = fields.Model(PersonDetails, default=PersonDetails())"""
 
     result = generator.parse(input_xml)
     assert result == expected_output
@@ -194,15 +194,15 @@ class Other(dexml.Model):
 
 
 class Company(dexml.Model):
-    details = fields.Model(Details)
-    other = fields.Model(Other)
+    details = fields.Model(Details, default=Details())
+    other = fields.Model(Other, default=Other())
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
-    details = fields.Model(Details)
-    company = fields.Model(Company)"""
+    details = fields.Model(Details, default=Details())
+    company = fields.Model(Company, default=Company())"""
 
     result = generator.parse(input_xml)
     assert result == expected_output

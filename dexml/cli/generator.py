@@ -19,6 +19,7 @@ def get_type(value: str) -> str:
 
 
 def get_default(value: str) -> Union[int, float, bool, str]:
+    value = value.strip()
     if value.isdigit():
         return int(value)
     if value.replace(".", "").isdigit():
@@ -99,7 +100,7 @@ class DexmlModel:
     def get_as_attribute(self) -> str:
         attr_name = to_snake_case(self.tagname)
         cls_name = to_pascal_case(self.tagname)
-        return f"{attr_name} = fields.Model({cls_name})"
+        return f"{attr_name} = fields.Model({cls_name}, default={cls_name}())"
 
     def __str__(self) -> str:
         name = to_pascal_case(self.tagname)
