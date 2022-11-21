@@ -106,20 +106,20 @@ from dexml import fields
 
 
 class Address(dexml.Model):
-    street = fields.String(tagname="Street")
+    street = fields.String(tagname="Street", default="101 Road")
 
 
 class PersonDetails(dexml.Model):
-    person_name = fields.String(tagname="PersonName")
-    person_age = fields.Integer(tagname="PersonAge")
+    person_name = fields.String(tagname="PersonName", default="Jim")
+    person_age = fields.Integer(tagname="PersonAge", default=42)
     address = fields.Model(Address)
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
-    amount = fields.Float(tagname="Amount")
-    enabled = fields.Boolean(tagname="Enabled")
+    amount = fields.Float(tagname="Amount", default=240.45)
+    enabled = fields.Boolean(tagname="Enabled", default=True)
     person_details = fields.Model(PersonDetails)"""
 
     result = generator.parse(input_xml)
@@ -144,21 +144,21 @@ from dexml import fields
 
 
 class Address(dexml.Model):
-    street = fields.String(tagname="Street")
+    street = fields.String(tagname="Street", default="101 Road")
 
 
 class PersonDetails(dexml.Model):
     class meta:
         tagname = "person_details"
-    person_name = fields.String()
-    person_age = fields.Integer(tagname="PersonAge")
+    person_name = fields.String(default="Jim")
+    person_age = fields.Integer(tagname="PersonAge", default=42)
     address = fields.Model(Address)
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
-    amount = fields.Float(tagname="Amount")
+    amount = fields.Float(tagname="Amount", default=240.45)
     person_details = fields.Model(PersonDetails)"""
 
     result = generator.parse(input_xml)
@@ -186,11 +186,11 @@ from dexml import fields
 
 
 class Details(dexml.Model):
-    name = fields.String(tagname="Name")
+    name = fields.String(tagname="Name", default="Jim")
 
 
 class Other(dexml.Model):
-    misc = fields.String(tagname="Misc")
+    misc = fields.String(tagname="Misc", default="Unknown")
 
 
 class Company(dexml.Model):

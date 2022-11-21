@@ -18,6 +18,18 @@ def get_type(value: str) -> str:
     return "String"
 
 
+def get_default(value: str) -> Union[int, float, bool, str]:
+    if value.isdigit():
+        return int(value)
+    if value.replace(".", "").isdigit():
+        return float(value)
+    if value in ["true", "false"]:
+        if value == "true":
+            return True
+        return False
+    return f'"{value}"'
+
+
 def to_snake_case(name: str) -> str:
     new_name = []
     prev_char = None
@@ -67,13 +79,14 @@ def to_pascal_case(name: str) -> str:
 @dataclass
 class DexmlAttribute:
     tagname: str
-    type: str = "String"
+    default: Union[int, str, bool, float]
+    type: str
 
     def __str__(self) -> str:
         name = to_snake_case(self.tagname)
         if name == self.tagname:
-            return f"{self.tagname} = fields.{self.type}()"
-        return f'{name} = fields.{self.type}(tagname="{self.tagname}")'
+            return f"{self.tagname} = fields.{self.type}(default={self.default})"
+        return f'{name} = fields.{self.type}(tagname="{self.tagname}", default={self.default})'
 
 
 @dataclass
@@ -110,7 +123,11 @@ def extract_models(
         children_count += 1
 
     if children_count == 0:
-        return DexmlAttribute(xml_element.tag, type=get_type(xml_element.text))
+        return DexmlAttribute(
+            xml_element.tag,
+            type=get_type(xml_element.text),
+            default=get_default(xml_element.text),
+        )
 
     dexml_model = DexmlModel(xml_element.tag, [], [], level)
 
