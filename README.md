@@ -11,6 +11,12 @@ Before refactoring, the original code was sourced from both:
  - https://github.com/realrunner/dexml
  - https://github.com/rfk/dexml
 
+## Installation
+
+```
+pip install dexml-python
+```
+
 ## Documentation
 
 Let's face it: xml is a fact of modern life. I'd even go so far as to say
