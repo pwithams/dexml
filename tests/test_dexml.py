@@ -1426,7 +1426,7 @@ class TestListField(unittest.TestCase):
             recipient = fields.String(default="Test", tagname="recipient")
             size = fields.Integer(default=42, tagname="size")
             message = fields.String(default="Hello, world", tagname="message")
-            inner = fields.Model(Inner, default=Inner(), tagname="Inner")
+            inner = fields.Model(Inner, default=Inner, tagname="Inner")
 
         expected_render = '<?xml version="1.0" ?><Hello><recipient>Test</recipient><size>42</size><message>Hello, world</message><Inner><Name>Inner</Name></Inner></Hello>'
 
@@ -1434,8 +1434,6 @@ class TestListField(unittest.TestCase):
         self.assertEqual(result, expected_render)
 
     def test_default_rendering_nested_no_tags(self):
-        """Allow a render() on instance to pull defaults, not just during parse."""
-
         class Inner(dexml.Model):
             name = fields.String(default="Inner")
 
@@ -1443,7 +1441,7 @@ class TestListField(unittest.TestCase):
             recipient = fields.String(default="Test")
             size = fields.Integer(default=42)
             message = fields.String(default="Hello, world")
-            inner = fields.Model(Inner, default=Inner())
+            inner = fields.Model(Inner, default=Inner)
 
         expected_render = '<?xml version="1.0" ?><Hello recipient="Test" size="42" message="Hello, world"><Inner name="Inner" /></Hello>'
 
@@ -1451,8 +1449,6 @@ class TestListField(unittest.TestCase):
         self.assertEqual(result, expected_render)
 
     def test_default_rendering_simple(self):
-        """Allow a render() on instance to pull defaults, not just during parse."""
-
         class SomeModel(dexml.Model):
             name = fields.String(tagname="Name", default="value")
 
@@ -1464,12 +1460,24 @@ class TestListField(unittest.TestCase):
         self.assertEqual(result, expected_render)
 
     def test_default_rendering_simple_no_tags(self):
-        """Allow a render() on instance to pull defaults, not just during parse."""
-
         class SomeModel(dexml.Model):
             name = fields.String(default="value")
 
         expected_render = '<?xml version="1.0" ?><SomeModel name="value" />'
 
         result = SomeModel().render()
+        self.assertEqual(result, expected_render)
+
+    def test_default_rendering_list(self):
+        class Inner(dexml.Model):
+            name = fields.String(default="Inner", tagname="Name")
+
+        class Hello(dexml.Model):
+            inner = fields.List(Inner, default=[Inner])
+
+        expected_render = (
+            '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner></Hello>'
+        )
+
+        result = Hello().render()
         self.assertEqual(result, expected_render)

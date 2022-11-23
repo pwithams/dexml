@@ -4,6 +4,7 @@ dexml.fields:  basic field type definitions for dexml
 =====================================================
 
 """
+import inspect
 import xml.dom.minidom
 from typing import Any, Dict, Generator, List
 
@@ -64,6 +65,13 @@ class Field(object):
             if not argnm.startswith("__"):
                 setattr(self, argnm, kwds.get(argnm, getattr(args, argnm)))
         if self.default is not None:
+            if inspect.isclass(self.default):
+                self.default = self.default()
+            if isinstance(self.default, list) and inspect.isclass(self.default[0]):
+                default = []
+                for cls in self.default:
+                    default.append(cls())
+                self.default = default
             self.required = False
 
     def parse_attributes(
