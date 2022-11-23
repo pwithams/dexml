@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dexml-python3"
-version = "0.1.5"
+version = "0.1.6"
 description = "A dead-simple xml object mapper for Python"
 authors = ["Patrick Withams <pwithams@gmail.com>"]
 readme = "README.md"
