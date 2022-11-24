@@ -37,3 +37,7 @@ release: update-init build
 	git tag $(VERSION)
 	git push origin $(VERSION)
 	git push
+
+release-patch:
+	poetry version patch
+	make release
