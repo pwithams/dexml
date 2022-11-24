@@ -1,3 +1,6 @@
+from typing import List as TypeList
+from typing import Tuple
+
 from dexml import constants, exceptions
 from dexml.fields import field as dexml_field
 from dexml.fields import model as model_field
@@ -117,7 +120,7 @@ class List(dexml_field.Field):
                 "Field '%s': too many items" % (self.field_name,)
             )
 
-    def render_children(self, obj, items, nsmap):
+    def render_children(self, obj, items, nsmap, use_field_names=False):
         #  Create a generator that yields child data chunks, and validates
         #  the number of items in the list as it goes.  It allows any
         #  iterable to be passed in, not just a list.
@@ -128,7 +131,9 @@ class List(dexml_field.Field):
                 if self.maxlength is not None and num_items > self.maxlength:
                     msg = f"Field '{self.field_name}': too many items"
                     raise exceptions.RenderError(msg)
-                for data in self.field.render_children(obj, item, nsmap):
+                for data in self.field.render_children(
+                    obj, item, nsmap, use_field_names
+                ):
                     yield data
             if self.minlength is not None and num_items < self.minlength:
                 msg = f"Field '{self.field_name}': not enough items"
@@ -136,16 +141,38 @@ class List(dexml_field.Field):
 
         chunks = child_chunks()
         #  Render each chunk, but suppress the wrapper tag if there's no data.
+        tagname = self.tagname
+        if use_field_names:
+            tagname = self.field_name
         try:
             data = next(chunks)
         except StopIteration:
-            if self.tagname and self.required:
-                yield f"<{self.tagname} />"
+            if tagname and self.required:
+                yield f"<{tagname} />"
         else:
-            if self.tagname:
-                yield f"<{self.tagname}>"
+            if tagname:
+                yield f"<{tagname}>"
             yield data
             for data in chunks:
                 yield data
-            if self.tagname:
-                yield f"</{self.tagname}>"
+            if tagname:
+                yield f"</{tagname}>"
+
+
+def find_list_names(fields: TypeList[dexml_field.Field]) -> TypeList[Tuple[str, str]]:
+    names = []
+    for field in fields:
+        if isinstance(field, List):
+            tagname = field.tagname
+            if tagname is None:
+                tagname = type(field.default[0]).__name__
+            names.append((field.field_name, tagname))
+            if "mod" in field.field.type.__dict__ and isinstance(
+                field.field.type.mod, model_field.Model
+            ):
+                sub_names = find_list_names(field.field.type.mod.type._fields)
+                names = names + sub_names
+        elif isinstance(field, model_field.Model):
+            names = find_list_names(field.type._fields)
+
+    return names

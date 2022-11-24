@@ -14,6 +14,8 @@ from xml.dom import minidom
 
 import dexml
 from dexml import fields
+from dexml import model as dexml_model
+from dexml.fields import list as dexml_list
 
 
 def b(raw):
@@ -1415,99 +1417,3 @@ class TestListField(unittest.TestCase):
         self.assertEqual(
             o.render(fragment=True), "<obj><subFF><name>N1</name></subFF></obj>"
         )
-
-    def test_default_rendering_nested(self):
-        """Allow a render() on instance to pull defaults, not just during parse."""
-
-        class Inner(dexml.Model):
-            name = fields.String(default="Inner", tagname="Name")
-
-        class Hello(dexml.Model):
-            recipient = fields.String(default="Test", tagname="recipient")
-            size = fields.Integer(default=42, tagname="size")
-            message = fields.String(default="Hello, world", tagname="message")
-            inner = fields.Model(Inner, default=Inner, tagname="Inner")
-
-        expected_render = '<?xml version="1.0" ?><Hello><recipient>Test</recipient><size>42</size><message>Hello, world</message><Inner><Name>Inner</Name></Inner></Hello>'
-
-        result = Hello().render()
-        self.assertEqual(result, expected_render)
-
-    def test_default_rendering_nested_no_tags(self):
-        class Inner(dexml.Model):
-            name = fields.String(default="Inner")
-
-        class Hello(dexml.Model):
-            recipient = fields.String(default="Test")
-            size = fields.Integer(default=42)
-            message = fields.String(default="Hello, world")
-            inner = fields.Model(Inner, default=Inner)
-
-        expected_render = '<?xml version="1.0" ?><Hello recipient="Test" size="42" message="Hello, world"><Inner name="Inner" /></Hello>'
-
-        result = Hello().render()
-        self.assertEqual(result, expected_render)
-
-    def test_default_rendering_simple(self):
-        class SomeModel(dexml.Model):
-            name = fields.String(tagname="Name", default="value")
-
-        expected_render = (
-            '<?xml version="1.0" ?><SomeModel><Name>value</Name></SomeModel>'
-        )
-
-        result = SomeModel().render()
-        self.assertEqual(result, expected_render)
-
-    def test_default_rendering_simple_no_tags(self):
-        class SomeModel(dexml.Model):
-            name = fields.String(default="value")
-
-        expected_render = '<?xml version="1.0" ?><SomeModel name="value" />'
-
-        result = SomeModel().render()
-        self.assertEqual(result, expected_render)
-
-    def test_default_rendering_list(self):
-        class Inner(dexml.Model):
-            name = fields.String(default="Inner", tagname="Name")
-
-        class Hello(dexml.Model):
-            inner = fields.List(Inner, default=[Inner])
-
-        expected_render = (
-            '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner></Hello>'
-        )
-
-        result = Hello().render()
-        self.assertEqual(result, expected_render)
-
-    def test_list_parse_order(self):
-        class Inner(dexml.Model):
-            name = fields.String(tagname="Name")
-
-        class Hello(dexml.Model):
-            inner = fields.List(Inner)
-            val = fields.String(tagname="Val")
-
-        parse_input = '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner><Inner><Name>Inner</Name></Inner><Val>Test</Val></Hello>'
-
-        result = Hello.parse(parse_input)
-        self.assertEqual(result.render(), parse_input)
-
-    def test_list_parse_out_of_order(self):
-        class Inner(dexml.Model):
-            name = fields.String(tagname="Name", attribute="Id")
-
-        class Hello(dexml.Model):
-            class meta:
-                order_sensitive = False
-
-            inner = fields.List(Inner)
-            val = fields.String(tagname="Val")
-
-        parse_input = '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner><Val>Test</Val><Inner><Name>Inner</Name></Inner></Hello>'
-        expected_output = '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner><Inner><Name>Inner</Name></Inner><Val>Test</Val></Hello>'
-
-        result = Hello.parse(parse_input)
-        self.assertEqual(result.render(), expected_output)

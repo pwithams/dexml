@@ -37,12 +37,12 @@ class Choice(dexml_field.Field):
         else:
             return constants.Status.PARSE_SKIP
 
-    def render_children(self, obj, item, nsmap):
+    def render_children(self, obj, item, nsmap, use_field_names=False):
         if item is None:
             if self.required:
                 raise exceptions.RenderError(
                     f"Field '{self.field_name}': required field is missing"
                 )
         else:
-            for data in item._render(nsmap=nsmap):
+            for data in item._render(nsmap=nsmap, use_field_names=use_field_names):
                 yield data

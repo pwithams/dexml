@@ -1,9 +1,33 @@
+import json
 from typing import List
 from xml.dom import minidom
 
+import xmltodict
+
 from dexml import constants, exceptions
 from dexml.fields import field as dexml_field
+from dexml.fields import list as dexml_list
 from dexml.meta import Meta, ModelMetaclass
+
+
+def flatten_dict(data: dict) -> dict:
+    for key, value in data.items():
+        if isinstance(value, dict) and key in value:
+            new_value = value[key]
+            if isinstance(new_value, dict):
+                new_value = flatten_dict(new_value)
+            data[key] = new_value
+    return data
+
+
+def key_to_list(data: dict, keys: List[str]) -> None:
+    for key, value in data.items():
+        if isinstance(value, dict):
+            key_to_list(value, keys)
+            for key_pair in keys:
+                if key in key_pair:
+                    data[key] = [value]
+                    break
 
 
 class Model(metaclass=ModelMetaclass):
@@ -156,7 +180,14 @@ class Model(metaclass=ModelMetaclass):
                     err = "unknown attribute: %s" % (node.name,)
                     raise exceptions.ParseError(err)
 
-    def render(self, encoding=None, fragment=False, pretty=False, nsmap=None):
+    def render(
+        self,
+        encoding=None,
+        fragment=False,
+        pretty=False,
+        nsmap=None,
+        use_field_names=False,
+    ):
         """Produce XML from this model's instance data.
 
         A unicode string will be returned if any of the objects contain
@@ -176,7 +207,7 @@ class Model(metaclass=ModelMetaclass):
         if not fragment:
             data.append(header)
 
-        data.extend(self._render(nsmap))
+        data.extend(self._render(nsmap, use_field_names=use_field_names))
         xml = "".join(data)
         if pretty:
             xml = minidom.parseString(xml).toprettyxml()
@@ -194,7 +225,7 @@ class Model(metaclass=ModelMetaclass):
             xml = xml.encode(encoding)
         return xml
 
-    def irender(self, encoding=None, fragment=False, nsmap=None):
+    def irender(self, encoding=None, fragment=False, nsmap=None, use_field_names=False):
         """Generator producing XML from this model's instance data.
 
         If any of the objects contain unicode values, the resulting output
@@ -214,15 +245,15 @@ class Model(metaclass=ModelMetaclass):
             else:
                 yield '<?xml version="1.0" ?>'
         if encoding:
-            for data in self._render(nsmap):
+            for data in self._render(nsmap, use_field_names=use_field_names):
                 if isinstance(data, str):
                     data = data.encode(encoding)
                 yield data
         else:
-            for data in self._render(nsmap):
+            for data in self._render(nsmap, use_field_names=use_field_names):
                 yield data
 
-    def _render(self, nsmap, tagname=None):
+    def _render(self, nsmap, tagname=None, use_field_names=False):
         """Generator rendering this model as an XML fragment."""
         #  Determine opening and closing tags
         pushed_ns = False
@@ -257,7 +288,7 @@ class Model(metaclass=ModelMetaclass):
         used_fields = set()
         open_tag_contents.extend(self._render_attributes(used_fields, nsmap))
         #  Render each child node
-        children = self._render_children(used_fields, nsmap)
+        children = self._render_children(used_fields, nsmap, use_field_names)
         try:
             first_child = next(children)
         except StopIteration:
@@ -292,10 +323,10 @@ class Model(metaclass=ModelMetaclass):
                 for data in datas:
                     yield data
 
-    def _render_children(self, used_fields, nsmap):
+    def _render_children(self, used_fields, nsmap, use_field_names):
         for field in self._fields:
             val = getattr(self, field.field_name)
-            datas = iter(field.render_children(self, val, nsmap))
+            datas = iter(field.render_children(self, val, nsmap, use_field_names))
             try:
                 data = next(datas)
             except StopIteration:
@@ -382,3 +413,17 @@ class Model(metaclass=ModelMetaclass):
                     node.namespaceURI,
                 )
                 raise exceptions.ParseError(err)
+
+    def render_dict(self, use_field_names=False, flatten=False):
+        data = xmltodict.parse(self.render(use_field_names=use_field_names))
+        if flatten:
+            for key in data.keys():
+                data[key] = flatten_dict(data[key])
+        list_keys = dexml_list.find_list_names(self._fields)
+        key_to_list(data, list_keys)
+        return data
+
+    def render_json(self, use_field_names=False, flatten=False):
+        return json.dumps(
+            self.render_dict(use_field_names=use_field_names, flatten=flatten)
+        )

@@ -37,6 +37,6 @@ class XmlNode(dexml_field.Field):
         return constants.Status.PARSE_SKIP
 
     @classmethod
-    def render_children(cls, obj, val, nsmap):
+    def render_children(cls, obj, val, nsmap, use_field_names=False):
         if val is not None:
             yield val.toxml()

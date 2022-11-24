@@ -83,7 +83,11 @@ class Model(dexml_field.Field):
     def render_attributes(self, obj, val, nsmap):
         return []
 
-    def render_children(self, obj, val, nsmap):
+    def render_children(self, obj, val, nsmap, use_field_names=False):
+        tagname = self.tagname
+        if use_field_names:
+            tagname = self.field_name
+
         if val is not None:
-            for data in val._render(nsmap, self.tagname):
+            for data in val._render(nsmap, tagname, use_field_names):
                 yield data

@@ -121,7 +121,7 @@ class Field(object):
         yield
 
     def render_children(
-        self, obj: object, val: Any, nsmap: Dict[str, Any]
+        self, obj: object, val: Any, nsmap: Dict[str, Any], use_field_names: bool
     ) -> Generator[str, None, None]:
         """Render any child nodes that this field manages."""
         return

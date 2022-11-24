@@ -127,21 +127,24 @@ class Value(field.Field):
                         yield f'xmlns:{prefix}="{ns}"'
                     yield f"{prefix}:{nm}={qaval}"
 
-    def render_children(self, obj, val, nsmap):
-        if val is not None and self.tagname:
+    def render_children(self, obj, val, nsmap, use_field_names=False):
+        tagname = self.tagname
+        if val is not None and tagname:
             val = self._esc_render_value(val)
-            if self.tagname == ".":
+            if tagname == ".":
                 yield val
             else:
+                if use_field_names:
+                    tagname = self.field_name
                 attrs = ""
                 #  By default, tag values inherit the namespace of their
                 #  containing model class.
-                if isinstance(self.tagname, str):
+                if isinstance(tagname, str):
                     prefix = self.model_class.meta.namespace_prefix
-                    localName = self.tagname
+                    localName = tagname
                 else:
                     m_meta = self.model_class.meta
-                    (ns, localName) = self.tagname
+                    (ns, localName) = tagname
                     if not ns:
                         #  If we have an explicitly un-namespaced tag,
                         #  we need to be careful.  The model tag might have
@@ -250,10 +253,10 @@ class Boolean(Value):
             return False
         return True
 
-    def render_children(self, obj, val, nsmap):
+    def render_children(self, obj, val, nsmap, use_field_names=False):
         if not val and self.empty_only:
             return []
-        return super().render_children(obj, val, nsmap)
+        return super().render_children(obj, val, nsmap, use_field_names=use_field_names)
 
     def render_attributes(self, obj, val, nsmap):
         if not val and self.empty_only:

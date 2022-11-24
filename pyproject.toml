@@ -12,6 +12,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.7.2"
 typer = {extras = ["all"], version = "^0.7.0"}
+xmltodict = "^0.13.0"
 
 
 [tool.poetry.group.dev.dependencies]

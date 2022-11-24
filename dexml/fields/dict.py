@@ -158,23 +158,30 @@ class Dict(dexml_field.Field):
         if self.maxlength is not None and len(items) > self.maxlength:
             raise exceptions.ParseError("Field '{self.field_name}': too many items")
 
-    def render_children(self, obj, items, nsmap):
+    def render_children(self, obj, items, nsmap, use_field_names=False):
+        tagname = self.tagname
+        if use_field_names:
+            tagname = self.field_name
         if self.minlength is not None and len(items) < self.minlength:
             raise exceptions.RenderError(f"Field '{self.field_name}': not enough items")
         if self.maxlength is not None and len(items) > self.maxlength:
             raise exceptions.RenderError("too many items")
-        if self.tagname:
+        if tagname:
             children = "".join(
                 data
                 for item in items.values()
-                for data in self.field.render_children(obj, item, nsmap)
+                for data in self.field.render_children(
+                    obj, item, nsmap, use_field_names
+                )
             )
             if not children:
                 if self.required:
-                    yield f"<{self.tagname} />"
+                    yield f"<{tagname} />"
             else:
-                yield children.join((f"<{self.tagname}>", f"</{self.tagname}>"))
+                yield children.join((f"<{tagname}>", f"</{tagname}>"))
         else:
             for item in items.values():
-                for data in self.field.render_children(obj, item, nsmap):
+                for data in self.field.render_children(
+                    obj, item, nsmap, use_field_names
+                ):
                     yield data
