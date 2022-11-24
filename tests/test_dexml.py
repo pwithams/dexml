@@ -1481,3 +1481,33 @@ class TestListField(unittest.TestCase):
 
         result = Hello().render()
         self.assertEqual(result, expected_render)
+
+    def test_list_parse_order(self):
+        class Inner(dexml.Model):
+            name = fields.String(tagname="Name")
+
+        class Hello(dexml.Model):
+            inner = fields.List(Inner)
+            val = fields.String(tagname="Val")
+
+        parse_input = '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner><Inner><Name>Inner</Name></Inner><Val>Test</Val></Hello>'
+
+        result = Hello.parse(parse_input)
+        self.assertEqual(result.render(), parse_input)
+
+    def test_list_parse_out_of_order(self):
+        class Inner(dexml.Model):
+            name = fields.String(tagname="Name", attribute="Id")
+
+        class Hello(dexml.Model):
+            class meta:
+                order_sensitive = False
+
+            inner = fields.List(Inner)
+            val = fields.String(tagname="Val")
+
+        parse_input = '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner><Val>Test</Val><Inner><Name>Inner</Name></Inner></Hello>'
+        expected_output = '<?xml version="1.0" ?><Hello><Inner><Name>Inner</Name></Inner><Inner><Name>Inner</Name></Inner><Val>Test</Val></Hello>'
+
+        result = Hello.parse(parse_input)
+        self.assertEqual(result.render(), expected_output)

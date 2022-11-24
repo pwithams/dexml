@@ -106,23 +106,29 @@ from dexml import fields
 
 
 class Address(dexml.Model):
+    class meta:
+        order_sensitive = False
     street = fields.String(tagname="Street", default="101 Road")
 
 
 class PersonDetails(dexml.Model):
+    class meta:
+        order_sensitive = False
     person_name = fields.String(tagname="PersonName", default="Jim")
     person_age = fields.Integer(tagname="PersonAge", default=42)
-    address = fields.Model(Address, default=Address())
+    address = fields.Model(Address, default=Address)
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
+        order_sensitive = False
     amount = fields.Float(tagname="Amount", default=240.45)
     enabled = fields.Boolean(tagname="Enabled", default=True)
-    person_details = fields.Model(PersonDetails, default=PersonDetails())"""
+    person_details = fields.Model(PersonDetails, default=PersonDetails)"""
 
-    result = generator.parse(input_xml)
+    parser = generator.Parser(generator.ParserConfig(True, 4))
+    result = parser.parse(input_xml)
     assert result == expected_output
 
 
@@ -144,24 +150,28 @@ from dexml import fields
 
 
 class Address(dexml.Model):
+    class meta:
+        order_sensitive = False
     street = fields.String(tagname="Street", default="101 Road")
 
 
 class PersonDetails(dexml.Model):
     class meta:
         tagname = "person_details"
+        order_sensitive = False
     person_name = fields.String(default="Jim")
     person_age = fields.Integer(tagname="PersonAge", default=42)
-    address = fields.Model(Address, default=Address())
+    address = fields.Model(Address, default=Address)
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
+        order_sensitive = False
     amount = fields.Float(tagname="Amount", default=240.45)
-    person_details = fields.Model(PersonDetails, default=PersonDetails())"""
-
-    result = generator.parse(input_xml)
+    person_details = fields.Model(PersonDetails, default=PersonDetails)"""
+    parser = generator.Parser(generator.ParserConfig(True, 4))
+    result = parser.parse(input_xml)
     assert result == expected_output
 
 
@@ -186,25 +196,33 @@ from dexml import fields
 
 
 class Details(dexml.Model):
+    class meta:
+        order_sensitive = False
     name = fields.String(tagname="Name", default="Jim")
 
 
 class Other(dexml.Model):
+    class meta:
+        order_sensitive = False
     misc = fields.String(tagname="Misc", default="Unknown")
 
 
 class Company(dexml.Model):
-    details = fields.Model(Details, default=Details())
-    other = fields.Model(Other, default=Other())
+    class meta:
+        order_sensitive = False
+    details = fields.Model(Details, default=Details)
+    other = fields.Model(Other, default=Other)
 
 
 class Block(dexml.Model):
     class meta:
         tagname = "BLOCK"
-    details = fields.Model(Details, default=Details())
-    company = fields.Model(Company, default=Company())"""
+        order_sensitive = False
+    company = fields.Model(Company, default=Company)
+    details = fields.Model(Details, default=Details)"""
 
-    result = generator.parse(input_xml)
+    parser = generator.Parser(generator.ParserConfig(True, 4))
+    result = parser.parse(input_xml)
     assert result == expected_output
 
 
@@ -218,4 +236,4 @@ def test_main_function(patched_sys):
 </Data>"""
 
     patched_sys.stdin = input_xml.split("\n")
-    generator.main()
+    generator.main(True, 4)

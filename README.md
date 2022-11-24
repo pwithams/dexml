@@ -97,6 +97,12 @@ You can generate Python code with `dexml` models from XML using the following co
 cat file.xml | python -m dexml > model.py
 ```
 
+To view the current config options:
+
+```
+python -m dexml --help
+```
+
 Only the `Model`, `String`, `Integer`, `Float`, and `Boolean` fields are currently supported.
 
 Generation is not intended to be 100% perfect but as a starting point for manually creating large models.

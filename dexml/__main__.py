@@ -1,4 +1,6 @@
+import typer
+
 from dexml.cli import cli
 
 if __name__ == "__main__":
-    cli.run()
+    typer.run(cli.run)
