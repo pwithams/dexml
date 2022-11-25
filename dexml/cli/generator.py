@@ -160,7 +160,6 @@ class Parser:
 
         default: Any
         if children_count == 0:
-            print(type(xml_element))
             if xml_element.text is None:
                 attr_type = "String"
                 default = '""'
