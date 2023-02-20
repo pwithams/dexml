@@ -1,11 +1,8 @@
 # dexml: An Object-XML Mapper for Python
 
-This is a maintained version of the original `dexml` Python package, intended for Python 3 use only.
+This is a version of the original `dexml` Python package, intended for Python 3 use only.
 
-Other than providing a maintained version that supports modern Python 3, other future goals include:
- - support with Python dataclasses and `pydantic` models
- - support for auto-generating models based on example XML payloads
- - keep backwards compatibility with original `dexml` package where possible
+For a simpler, alternative package that is Pydantic-compatible, see https://github.com/pwithams/pydantic-xml-converter
 
 Before refactoring, the original code was sourced from both:
  - https://github.com/realrunner/dexml
